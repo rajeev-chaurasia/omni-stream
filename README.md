@@ -2,6 +2,9 @@
 
 High-performance C++17 telemetry agent for autonomous vehicle simulation. Generates synthetic sensor data at 60Hz with zero-copy memory management and real-time visualization.
 
+<img width="1511" height="731" alt="image" src="https://github.com/user-attachments/assets/33c21048-d529-4d98-9e19-d91639af7bd4" />
+
+
 ## Architecture
 
 ```mermaid
