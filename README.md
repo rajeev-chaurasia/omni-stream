@@ -7,13 +7,13 @@ High-performance C++17 telemetry agent for autonomous vehicle simulation. Genera
 ```mermaid
 flowchart LR
     subgraph agent["C++ Agent"]
-        SG["SensorGenerator\n60Hz Loop"] --> Q["ThreadSafe\nQueue"]
-        Q --> NC["NetworkClient\ngRPC Stream"]
+        SG["SensorGenerator (60Hz Loop)"] --> Q["ThreadSafe Queue"]
+        Q --> NC["NetworkClient (gRPC Stream)"]
     end
     
     subgraph dashboard["Dashboard Server"]
-        PY["Python\nBridge"] --> WS["WebSocket\nBroadcast"]
-        WS --> BR["Browser\nDashboard"]
+        PY["Python Bridge"] --> WS["WebSocket Broadcast"]
+        WS --> BR["Browser Dashboard"]
     end
     
     NC -.-> PY
@@ -156,7 +156,3 @@ omni-stream/
 2. Press `Ctrl+C` in the C++ agent terminal
 
 Both will shut down gracefully.
-
-## License
-
-MIT
