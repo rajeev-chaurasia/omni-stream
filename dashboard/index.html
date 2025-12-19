@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniStream | Telemetry Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">◉</div>
+                <span class="logo-text">OmniStream</span>
+            </div>
+            <div class="status">
+                <div class="status-indicator" id="connectionStatus"></div>
+                <span id="connectionText">Connecting...</span>
+            </div>
+            <div class="vehicle-info">
+                <span class="vehicle-label">Vehicle</span>
+                <span class="vehicle-id" id="vehicleId">---</span>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <main class="grid">
+            <!-- Lidar Panel -->
+            <section class="panel lidar-panel">
+                <div class="panel-header">
+                    <h2>🔵 LIDAR Scan</h2>
+                    <span class="panel-badge" id="lidarPoints">0 pts</span>
+                </div>
+                <div class="panel-content">
+                    <canvas id="lidarChart"></canvas>
+                </div>
+            </section>
+
+            <!-- IMU Panel -->
+            <section class="panel imu-panel">
+                <div class="panel-header">
+                    <h2>📈 IMU Accelerometer</h2>
+                    <span class="panel-badge">m/s²</span>
+                </div>
+                <div class="panel-content">
+                    <canvas id="imuChart"></canvas>
+                </div>
+                <div class="imu-values">
+                    <div class="imu-value">
+                        <span class="imu-label">X</span>
+                        <span class="imu-number" id="imuX">0.00</span>
+                    </div>
+                    <div class="imu-value">
+                        <span class="imu-label">Y</span>
+                        <span class="imu-number" id="imuY">0.00</span>
+                    </div>
+                    <div class="imu-value">
+                        <span class="imu-label">Z</span>
+                        <span class="imu-number" id="imuZ">0.00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Battery Panel -->
+            <section class="panel battery-panel">
+                <div class="panel-header">
+                    <h2>🔋 Battery Status</h2>
+                </div>
+                <div class="panel-content battery-content">
+                    <div class="battery-gauge">
+                        <div class="battery-level" id="batteryLevel"></div>
+                        <div class="battery-text" id="batteryText">100%</div>
+                    </div>
+                    <div class="battery-stats">
+                        <div class="stat">
+                            <span class="stat-label">Voltage</span>
+                            <span class="stat-value" id="voltage">48.2V</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Current</span>
+                            <span class="stat-value" id="current">12.4A</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Est. Range</span>
+                            <span class="stat-value" id="range">142 km</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Metrics Panel -->
+            <section class="panel metrics-panel">
+                <div class="panel-header">
+                    <h2>📊 Performance Metrics</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-value" id="tickRate">0</span>
+                            <span class="metric-label">Hz</span>
+                            <span class="metric-title">Tick Rate</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="latency">0</span>
+                            <span class="metric-label">ms</span>
+                            <span class="metric-title">Latency</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="packetsTotal">0</span>
+                            <span class="metric-label">pkts</span>
+                            <span class="metric-title">Total Received</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="uptime">00:00</span>
+                            <span class="metric-label"></span>
+                            <span class="metric-title">Uptime</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>OmniStream Telemetry Agent v1.0</span>
+            <span id="timestamp">--</span>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
