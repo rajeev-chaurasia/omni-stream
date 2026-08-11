@@ -164,6 +164,13 @@ docker run --rm --network omni-net omnistream-agent \
 
 The agent image builds against Ubuntu's packaged gRPC and Protobuf, so it compiles in under a minute instead of building gRPC from source.
 
+The dashboard image defaults to the live path, so it waits for an agent instead of inventing data. For a hosted demo with no agent to point at it, override the command:
+
+```bash
+docker run -p 8000:8000 -p 8765:8765 omnistream-dashboard \
+    python3 -u telemetry_receiver.py --mode simulate
+```
+
 ## Fallback Simulator
 
 `--mode simulate` replaces the agent with synthetic data generated inside the Python process. It exists so the UI can be demoed without a compiled binary. **No gRPC is involved and no C++ code runs in this mode.** It is labelled everywhere it appears: the startup banner, the per second log line, the `source` and `simulated` fields on every WebSocket payload, and an amber `SIMULATED` badge in the dashboard header. The vehicle ID is `SIM-001` rather than `AV-001`.
