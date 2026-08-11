@@ -88,6 +88,10 @@ int main(int argc, char *argv[]) {
                    "localhost:50051)\n"
                 << "  --offline      Generate without streaming anywhere\n";
       return 0;
+    } else {
+      std::cerr << "Unrecognized argument: " << arg << "\n"
+                << "Run with --help for the accepted flags.\n";
+      return 1;
     }
   }
 
