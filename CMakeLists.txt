@@ -7,8 +7,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(Threads REQUIRED)
-find_package(Protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+
+# Source builds of gRPC and Protobuf ship CMake config packages; the Debian and
+# Ubuntu -dev packages only ship pkg-config files, so support both.
+find_package(Protobuf CONFIG QUIET)
+if(NOT Protobuf_FOUND)
+    find_package(Protobuf MODULE REQUIRED)
+endif()
+
+find_package(gRPC CONFIG QUIET)
+if(gRPC_FOUND)
+    set(GRPCPP_LIBRARIES gRPC::grpc++)
+    message(STATUS "gRPC: CMake config package ${gRPC_VERSION}")
+else()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GRPCPP REQUIRED IMPORTED_TARGET grpc++)
+    set(GRPCPP_LIBRARIES PkgConfig::GRPCPP)
+    message(STATUS "gRPC: pkg-config ${GRPCPP_VERSION}")
+endif()
 
 # Find protoc and grpc_cpp_plugin executables
 find_program(PROTOC_EXECUTABLE protoc REQUIRED)
@@ -47,7 +63,7 @@ add_library(proto_lib STATIC ${PROTO_SRCS} ${GRPC_SRCS})
 target_include_directories(proto_lib PUBLIC ${PROTO_OUT_DIR})
 target_link_libraries(proto_lib PUBLIC 
     protobuf::libprotobuf 
-    gRPC::grpc++
+    ${GRPCPP_LIBRARIES}
 )
 
 # Main executable
@@ -59,6 +75,6 @@ target_include_directories(omnistream PRIVATE
 target_link_libraries(omnistream 
     proto_lib
     Threads::Threads
-    gRPC::grpc++ 
+    ${GRPCPP_LIBRARIES}
     protobuf::libprotobuf
 )
