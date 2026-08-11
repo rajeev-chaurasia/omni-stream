@@ -38,12 +38,19 @@ Beyond the proto contract, this is the direction that fits the problem:
 
 ### Backpressure
 
-One chain, no queue growth anywhere:
+One chain, from the collector back to the physics thread:
 
-1. The browser or the WebSocket relay stalls, so the collector stops reading its request stream.
+1. The collector stops reading its request stream, because its read loop is blocked or the process is starved.
 2. The HTTP/2 flow control window closes, so the agent's `Write()` blocks.
 3. The network thread stops popping, so the bounded queue (capacity 1000) fills.
 4. `queue.push()` blocks the physics thread, which throttles generation at the source.
+
+A stalled browser is not part of that chain. `relay()` fans out with
+`websockets.broadcast()`, which queues into each client's write buffer and never
+waits, so one slow browser grows that buffer rather than throttling the agent.
+Measured: with a deliberately stalled client attached, the agent's queue stayed
+at depth 1 while the collector's memory grew. Freezing the collector itself does
+propagate, and fills the queue to 998 of 1000.
 
 The agent also drains in-flight packets on shutdown rather than dropping them, so `Ctrl+C` flushes what was already generated.
 
@@ -213,7 +220,7 @@ python3 telemetry_receiver.py [options]
 
 The header shows connection status, the telemetry source (`C++ AGENT` or an amber `SIMULATED`), and the vehicle ID.
 
-The agent paces generation at 60Hz off `steady_clock` (about 56Hz in practice, see Performance Notes), and the collector relays every packet it receives, so the browser receives and counts the full stream. Chart redraws are throttled to roughly 15 FPS (`VISUAL_UPDATE_MS` in `app.js`) so rendering does not become the bottleneck. The latency figure compares the agent's `system_clock` timestamp against the browser's clock, so it only means something when both run on the same machine.
+The agent paces generation at 60Hz off `steady_clock` (56 to 60Hz measured across runs, see Performance Notes), and the collector relays every packet it receives, so the browser receives and counts the full stream. Chart redraws are throttled to roughly 15 FPS (`VISUAL_UPDATE_MS` in `app.js`) so rendering does not become the bottleneck. The latency figure compares the agent's `system_clock` timestamp against the browser's clock, so it only means something when both run on the same machine.
 
 ## Performance Notes
 

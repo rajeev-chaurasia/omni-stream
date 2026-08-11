@@ -63,9 +63,9 @@ class TelemetryCollector(telemetry_pb2_grpc.TelemetryStreamServicer):
                 received += 1
                 self.packets += 1
 
-                # Awaiting the relay is what carries backpressure upstream: a
-                # stalled dashboard stops these reads, the HTTP/2 window closes
-                # and the agent's Write() blocks on its own bounded queue.
+                # websockets.broadcast() never waits, so a slow browser grows its
+                # own write buffer rather than throttling the agent. Only this
+                # loop stopping closes the HTTP/2 window and blocks the agent.
                 await self._on_packet(to_payload(packet, self.packets))
 
                 yield telemetry_pb2.ServerAck(
