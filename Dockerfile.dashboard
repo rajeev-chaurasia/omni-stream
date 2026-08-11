@@ -1,16 +1,20 @@
-# Dashboard container for Fly.io deployment
+# Dashboard container: gRPC collector, WebSocket bridge and static UI
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
-RUN pip install --no-cache-dir websockets
+COPY dashboard/requirements.txt dashboard/
+RUN pip install --no-cache-dir -r dashboard/requirements.txt
 
-# Copy dashboard files
-COPY dashboard/ .
+COPY protos/ protos/
+COPY dashboard/ dashboard/
 
-# Expose ports
-EXPOSE 8000 8765
+# Python stubs are generated at build time so live mode works out of the box
+RUN python3 dashboard/gen_protos.py
 
-# Run the dashboard server
-CMD ["python3", "telemetry_receiver.py", "--mode", "simulate"]
+WORKDIR /app/dashboard
+
+# 8000 static UI, 8765 WebSocket, 50051 gRPC telemetry in
+EXPOSE 8000 8765 50051
+
+CMD ["python3", "-u", "telemetry_receiver.py", "--mode", "grpc"]
