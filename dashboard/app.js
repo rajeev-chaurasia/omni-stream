@@ -75,7 +75,15 @@ function connectWebSocket() {
     ws.onmessage = (e) => {
         const msg = JSON.parse(e.data);
         if (msg.type === 'telemetry') handleTelemetry(msg.data);
+        else if (msg.type === 'connected') setSource(msg.simulated ? 'fallback-simulator' : 'cpp-agent');
     };
+}
+
+function setSource(source) {
+    const el = document.getElementById('sourceValue');
+    const simulated = source !== 'cpp-agent';
+    el.textContent = simulated ? 'SIMULATED' : 'C++ AGENT';
+    el.className = 'vehicle-id' + (simulated ? ' simulated' : '');
 }
 
 function handleTelemetry(data) {
@@ -92,6 +100,7 @@ function handleTelemetry(data) {
     lastVisualUpdate = now;
 
     document.getElementById('vehicleId').textContent = data.vehicle_id;
+    setSource(data.source);
     updateLidar(data.lidar_scan);
     updateIMU(data.imu_reading);
     updateBattery(data.battery_level);

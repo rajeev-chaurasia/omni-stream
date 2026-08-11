@@ -131,6 +131,10 @@ body {
     color: var(--accent-cyan);
 }
 
+.vehicle-id.simulated {
+    color: var(--accent-orange);
+}
+
 /* Main Grid */
 .grid {
     display: grid;
